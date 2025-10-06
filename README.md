@@ -8,15 +8,17 @@ Personal configuration files for development environment setup.
 dotfiles/
 ├── .github/
 │   └── workflows/
-│       └── example-secrets-usage.yml  # GitHub Actions example
+│       └── example-secrets-usage.yml      # GitHub Actions example
 ├── claude/
-│   └── CLAUDE.md                      # Global Claude Code settings
-├── .env.template                      # Environment variables template (committed)
-├── .env                               # Your actual values (local, git-ignored)
-├── .gitignore                         # Prevents .env from being committed
-├── install.sh                         # Automated setup script
-├── GITHUB_SECRETS.md                  # GitHub Secrets setup guide
-└── README.md                          # This file
+│   └── CLAUDE.md                          # Global Claude Code settings
+├── .env.template                          # Environment variables template (committed)
+├── .env                                   # Your actual values (local, git-ignored)
+├── .gitignore                             # Prevents .env from being committed
+├── install.sh                             # Automated setup script
+├── load-secrets-from-1password.sh         # Load secrets from 1Password
+├── GITHUB_SECRETS.md                      # GitHub Secrets setup guide
+├── 1PASSWORD_SETUP.md                     # 1Password integration guide
+└── README.md                              # This file
 ```
 
 ## Quick Setup
@@ -67,6 +69,35 @@ grep "dotfiles/.env" ~/.zshrc  # or ~/.bashrc
 - `.env.template` is committed (has placeholders/examples)
 - `.env` is git-ignored (has your actual values)
 - Never commit API keys or secrets to git
+
+### 1Password Integration (Recommended)
+
+**Better approach**: Store secrets in 1Password, sync automatically across machines.
+
+**Benefits**:
+- ✅ One source of truth (GRC vault)
+- ✅ Auto-sync across all machines
+- ✅ No manual `.env` setup
+- ✅ Biometric authentication
+
+**Setup**:
+```bash
+# Install 1Password
+brew install --cask 1password 1password-cli
+
+# Configure (one-time)
+# 1. Open 1Password app → Settings → Developer
+# 2. Enable "Connect with 1Password CLI"
+
+# Secrets auto-load on terminal open!
+source ~/dotfiles/load-secrets-from-1password.sh
+```
+
+**See**: `1PASSWORD_SETUP.md` for complete guide
+
+**Comparison**:
+- Local `.env`: Fast setup, manual sync across machines
+- 1Password: One-time setup, automatic sync everywhere
 
 ## What Gets Applied
 
