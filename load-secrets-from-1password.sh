@@ -63,7 +63,12 @@ export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$
 # Most tools expect it in the password field, not as a separate token
 
 # Claude Code
-export ANTHROPIC_API_KEY=$(op item get "Claude Code - API Key" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
+# DISABLED: Using claude.ai auth instead of API key to avoid conflicts
+# export ANTHROPIC_API_KEY=$(op item get "Claude Code - API Key" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
+
+# Slack
+export SLACK_BOT_TOKEN=$(op item get "DA Agent Hub - Slack Bot Token" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
+export SLACK_TEAM_ID=$(op item get "DA Agent Hub - Slack Bot Token" --vault="$VAULT" --fields label=team_id 2>/dev/null || echo "")
 
 # Verify critical secrets were loaded
 if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
@@ -80,8 +85,13 @@ echo "  DBT_PROJECT_DIR: $DBT_PROJECT_DIR"
 echo "  GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:15}..."
 echo "  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:0:10}..."
 echo "  AWS_REGION: $AWS_REGION"
-if [ -n "$ANTHROPIC_API_KEY" ]; then
-    echo "  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:0:20}..."
+# DISABLED: Using claude.ai auth instead
+# if [ -n "$ANTHROPIC_API_KEY" ]; then
+#     echo "  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:0:20}..."
+# fi
+if [ -n "$SLACK_BOT_TOKEN" ]; then
+    echo "  SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN:0:15}..."
+    echo "  SLACK_TEAM_ID: $SLACK_TEAM_ID"
 fi
 if [ -n "$SNOWFLAKE_ACCOUNT" ] && [ "$SNOWFLAKE_ACCOUNT" != "<your_snowflake_account>" ]; then
     echo "  SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT"
