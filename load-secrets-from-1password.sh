@@ -62,6 +62,9 @@ export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$
 # Note: Snowflake PAT is used as password (SNOWFLAKE_PASSWORD)
 # Most tools expect it in the password field, not as a separate token
 
+# Claude Code
+export ANTHROPIC_API_KEY=$(op item get "Claude Code - API Key" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
+
 # Verify critical secrets were loaded
 if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
     echo -e "${RED}❌ Failed to load critical secrets from 1Password${NC}"
@@ -77,6 +80,9 @@ echo "  DBT_PROJECT_DIR: $DBT_PROJECT_DIR"
 echo "  GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:15}..."
 echo "  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:0:10}..."
 echo "  AWS_REGION: $AWS_REGION"
+if [ -n "$ANTHROPIC_API_KEY" ]; then
+    echo "  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:0:20}..."
+fi
 if [ -n "$SNOWFLAKE_ACCOUNT" ] && [ "$SNOWFLAKE_ACCOUNT" != "<your_snowflake_account>" ]; then
     echo "  SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT"
     echo "  SNOWFLAKE_USER: $SNOWFLAKE_USER"
