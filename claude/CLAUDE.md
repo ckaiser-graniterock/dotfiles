@@ -98,6 +98,39 @@ If yes, please provide the file path to your personal preferences.
 - Problem-solving approach (fix root causes, not workarounds)
 - Testing standards (comprehensive hands-on testing, not just "it loads")
 
+## Environment Variables
+
+### Setup Location
+Environment variables are managed in the dotfiles repository:
+- **Template**: `~/dotfiles/.env.template` (committed to git, has placeholders)
+- **Actual values**: `~/dotfiles/.env` (local only, git-ignored, your personal values)
+- **Shell sourcing**: Automatically loaded via `.zshrc` or `.bashrc`
+
+### Available Environment Variables
+See `~/dotfiles/.env.template` for the complete list. Common variables include:
+
+- `CLAUDE_USER_NAME`: Your preferred name
+- `CLAUDE_COMMUNICATION_STYLE`: Communication style preference (roy-kent, professional, casual)
+- `DEV_DIR`: Your main development directory
+- `DA_AGENT_HUB_PATH`: Path to DA Agent Hub
+- `DBT_CLOUD_PATH`: Path to dbt_cloud repository
+- `CLAUDE_PERSONAL_SETTINGS`: Path to personal settings file
+
+### Usage in Claude Settings
+Reference environment variables using shell variable syntax: `$VARIABLE_NAME` or `${VARIABLE_NAME}`
+
+### Setup Instructions
+1. **Initial setup**: Run `~/dotfiles/install.sh` (automatically creates .env from template)
+2. **Configure values**: Edit `~/dotfiles/.env` with your actual values
+3. **Apply changes**: Restart shell or run `source ~/.zshrc` (or `~/.bashrc`)
+4. **Update template**: Edit `~/dotfiles/.env.template` to add new variables (commit this)
+5. **Never commit .env**: The actual .env file with your values is git-ignored
+
+### Security Note
+- **DO commit**: `.env.template` with placeholder/example values
+- **NEVER commit**: `.env` with actual values (especially API keys, tokens, paths)
+- The `.gitignore` file ensures `.env` is never accidentally committed
+
 # DA Agent Hub: Analytics Development Lifecycle (ADLC) AI Platform
 
 ## Overview

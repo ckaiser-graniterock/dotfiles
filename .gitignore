@@ -1,0 +1,16 @@
+# Environment variables with actual values
+.env
+
+# macOS
+.DS_Store
+
+# Backup files
+*.backup
+*.bak
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
