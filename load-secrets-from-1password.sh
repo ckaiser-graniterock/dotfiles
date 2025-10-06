@@ -35,13 +35,33 @@ fi
 # Fetch secrets from 1Password
 echo "📥 Fetching secrets from vault: $VAULT"
 
-export DBT_CLOUD_API_TOKEN=$(op item get "$ITEM_NAME" --vault="$VAULT" --fields label=credential --reveal)
-export DBT_CLOUD_ACCOUNT_ID=$(op item get "$ITEM_NAME" --vault="$VAULT" --fields label=account_id)
-export DBT_PROJECT_DIR=$(op item get "$ITEM_NAME" --vault="$VAULT" --fields label=project_dir)
+# dbt Cloud
+export DBT_CLOUD_API_TOKEN=$(op item get "DA Agent Hub - dbt Cloud" --vault="$VAULT" --fields label=credential --reveal)
+export DBT_CLOUD_ACCOUNT_ID=$(op item get "DA Agent Hub - dbt Cloud" --vault="$VAULT" --fields label=account_id)
+export DBT_PROJECT_DIR=$(op item get "DA Agent Hub - dbt Cloud" --vault="$VAULT" --fields label=project_dir)
 
-# Verify secrets were loaded
-if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$DBT_CLOUD_ACCOUNT_ID" ]; then
-    echo -e "${RED}❌ Failed to load secrets from 1Password${NC}"
+# GitHub
+export GITHUB_PERSONAL_ACCESS_TOKEN=$(op item get "DA Agent Hub - GitHub PAT" --vault="$VAULT" --fields label=credential --reveal)
+
+# AWS Credentials
+export AWS_ACCESS_KEY_ID=$(op item get "DA Agent Hub - AWS Credentials" --vault="$VAULT" --fields label=username)
+export AWS_SECRET_ACCESS_KEY=$(op item get "DA Agent Hub - AWS Credentials" --vault="$VAULT" --fields label=password --reveal)
+export AWS_REGION=$(op item get "DA Agent Hub - AWS Credentials" --vault="$VAULT" --fields label=region)
+export AWS_DEFAULT_REGION=$AWS_REGION
+
+# Snowflake (when credentials are filled in)
+export SNOWFLAKE_ACCOUNT=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=account 2>/dev/null || echo "")
+export SNOWFLAKE_USER=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=username 2>/dev/null || echo "")
+export SNOWFLAKE_PASSWORD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=password --reveal 2>/dev/null || echo "")
+export SNOWFLAKE_DATABASE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=database 2>/dev/null || echo "")
+export SNOWFLAKE_SCHEMA=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=schema 2>/dev/null || echo "")
+export SNOWFLAKE_WAREHOUSE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=warehouse 2>/dev/null || echo "")
+export SNOWFLAKE_ROLE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=role 2>/dev/null || echo "")
+export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=auth_method 2>/dev/null || echo "password")
+
+# Verify critical secrets were loaded
+if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
+    echo -e "${RED}❌ Failed to load critical secrets from 1Password${NC}"
     exit 1
 fi
 
@@ -51,6 +71,12 @@ echo "Environment variables set:"
 echo "  DBT_CLOUD_API_TOKEN: ${DBT_CLOUD_API_TOKEN:0:20}..."
 echo "  DBT_CLOUD_ACCOUNT_ID: $DBT_CLOUD_ACCOUNT_ID"
 echo "  DBT_PROJECT_DIR: $DBT_PROJECT_DIR"
+echo "  GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:15}..."
+echo "  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:0:10}..."
+echo "  AWS_REGION: $AWS_REGION"
+if [ -n "$SNOWFLAKE_ACCOUNT" ]; then
+    echo "  SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT"
+fi
 echo ""
 echo -e "${YELLOW}💡 Tip: Source this script to use secrets in your shell:${NC}"
 echo "  source ~/dotfiles/load-secrets-from-1password.sh"

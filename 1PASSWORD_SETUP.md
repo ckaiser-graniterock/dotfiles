@@ -73,11 +73,21 @@ op vault list
 
 ### 4. Secrets Are Already Stored!
 
-Secrets are stored in: **GRC Vault** → **"DA Agent Hub - dbt Cloud"**
+All DA Agent Hub secrets are stored in the **GRC Vault**:
+
+| Item Name | Secrets Stored |
+|-----------|----------------|
+| **DA Agent Hub - dbt Cloud** | dbt Cloud API token, account ID, project dir |
+| **DA Agent Hub - GitHub PAT** | GitHub Personal Access Token |
+| **DA Agent Hub - AWS Credentials** | AWS access key ID, secret key, region |
+| **DA Agent Hub - Snowflake** | Snowflake account, user, password, database, etc. |
 
 View them:
 ```bash
+op item list --vault="GRC" --tags="da-agent-hub"
 op item get "DA Agent Hub - dbt Cloud" --vault="GRC"
+op item get "DA Agent Hub - GitHub PAT" --vault="GRC"
+op item get "DA Agent Hub - AWS Credentials" --vault="GRC"
 ```
 
 ### 5. Load Secrets Automatically
@@ -91,7 +101,9 @@ source ~/dotfiles/load-secrets-from-1password.sh
 
 **Test it**: Open a new terminal and run:
 ```bash
-echo $DBT_CLOUD_ACCOUNT_ID  # Should show: 2672
+echo $DBT_CLOUD_ACCOUNT_ID           # Should show: 2672
+echo $GITHUB_PERSONAL_ACCESS_TOKEN  # Should show: ghp_...
+echo $AWS_ACCESS_KEY_ID             # Should show: AKIA...
 ```
 
 ## Daily Usage
