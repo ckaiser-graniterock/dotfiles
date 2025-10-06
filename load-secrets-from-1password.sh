@@ -59,10 +59,8 @@ export SNOWFLAKE_WAREHOUSE=$(op item get "DA Agent Hub - Snowflake" --vault="$VA
 export SNOWFLAKE_ROLE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=role 2>/dev/null || echo "")
 export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=auth_method 2>/dev/null || echo "oauth")
 
-# For Snowflake PAT auth, also set as token
-if [ "$SNOWFLAKE_AUTH_METHOD" = "oauth" ]; then
-    export SNOWFLAKE_TOKEN=$SNOWFLAKE_PASSWORD
-fi
+# Note: Snowflake PAT is used as password (SNOWFLAKE_PASSWORD)
+# Most tools expect it in the password field, not as a separate token
 
 # Verify critical secrets were loaded
 if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
