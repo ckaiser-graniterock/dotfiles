@@ -49,7 +49,7 @@ export AWS_SECRET_ACCESS_KEY=$(op item get "DA Agent Hub - AWS Credentials" --va
 export AWS_REGION=$(op item get "DA Agent Hub - AWS Credentials" --vault="$VAULT" --fields label=region)
 export AWS_DEFAULT_REGION=$AWS_REGION
 
-# Snowflake (when credentials are filled in)
+# Snowflake
 export SNOWFLAKE_ACCOUNT=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=account 2>/dev/null || echo "")
 export SNOWFLAKE_USER=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=username 2>/dev/null || echo "")
 export SNOWFLAKE_PASSWORD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=password --reveal 2>/dev/null || echo "")
@@ -57,7 +57,12 @@ export SNOWFLAKE_DATABASE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAU
 export SNOWFLAKE_SCHEMA=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=schema 2>/dev/null || echo "")
 export SNOWFLAKE_WAREHOUSE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=warehouse 2>/dev/null || echo "")
 export SNOWFLAKE_ROLE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=role 2>/dev/null || echo "")
-export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=auth_method 2>/dev/null || echo "password")
+export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=auth_method 2>/dev/null || echo "oauth")
+
+# For Snowflake PAT auth, also set as token
+if [ "$SNOWFLAKE_AUTH_METHOD" = "oauth" ]; then
+    export SNOWFLAKE_TOKEN=$SNOWFLAKE_PASSWORD
+fi
 
 # Verify critical secrets were loaded
 if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
@@ -74,8 +79,12 @@ echo "  DBT_PROJECT_DIR: $DBT_PROJECT_DIR"
 echo "  GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:0:15}..."
 echo "  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:0:10}..."
 echo "  AWS_REGION: $AWS_REGION"
-if [ -n "$SNOWFLAKE_ACCOUNT" ]; then
+if [ -n "$SNOWFLAKE_ACCOUNT" ] && [ "$SNOWFLAKE_ACCOUNT" != "<your_snowflake_account>" ]; then
     echo "  SNOWFLAKE_ACCOUNT: $SNOWFLAKE_ACCOUNT"
+    echo "  SNOWFLAKE_USER: $SNOWFLAKE_USER"
+    echo "  SNOWFLAKE_DATABASE: $SNOWFLAKE_DATABASE"
+    echo "  SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
+    echo "  SNOWFLAKE_AUTH_METHOD: $SNOWFLAKE_AUTH_METHOD"
 fi
 echo ""
 echo -e "${YELLOW}💡 Tip: Source this script to use secrets in your shell:${NC}"
