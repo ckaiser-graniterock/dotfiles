@@ -6,13 +6,17 @@ Personal configuration files for development environment setup.
 
 ```
 dotfiles/
+├── .github/
+│   └── workflows/
+│       └── example-secrets-usage.yml  # GitHub Actions example
 ├── claude/
-│   └── CLAUDE.md          # Global Claude Code settings
-├── .env.template          # Environment variables template (committed)
-├── .env                   # Your actual values (local, git-ignored)
-├── .gitignore             # Prevents .env from being committed
-├── install.sh             # Automated setup script
-└── README.md              # This file
+│   └── CLAUDE.md                      # Global Claude Code settings
+├── .env.template                      # Environment variables template (committed)
+├── .env                               # Your actual values (local, git-ignored)
+├── .gitignore                         # Prevents .env from being committed
+├── install.sh                         # Automated setup script
+├── GITHUB_SECRETS.md                  # GitHub Secrets setup guide
+└── README.md                          # This file
 ```
 
 ## Quick Setup
@@ -147,3 +151,16 @@ Your personal environment variable values:
 - Git-ignored (never committed)
 - Auto-sourced by shell profile
 - Contains actual paths, preferences, and secrets
+
+## GitHub Secrets for CI/CD
+
+For automated workflows, you can store secrets in GitHub and access them in GitHub Actions.
+
+**See**: `GITHUB_SECRETS.md` for complete setup guide
+
+**Quick start:**
+1. Go to: GitHub repo → Settings → Secrets and variables → Actions
+2. Add your secrets (DBT_CLOUD_API_TOKEN, DBT_CLOUD_ACCOUNT_ID, etc.)
+3. Use in workflows: `.github/workflows/example-secrets-usage.yml`
+
+**Important**: GitHub Secrets are for automation only - your local `.env` file still needs to be git-ignored and maintained separately.
