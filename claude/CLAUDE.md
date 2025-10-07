@@ -92,6 +92,11 @@ When creating feature branches, use these conventions:
   - No shortcuts, no "we'll fix it later" mentality
   - Enterprise-grade error handling and validation
   - Performance considerations built in from the start
+- **Credential Management**: ALWAYS use 1Password for secrets/tokens
+  - API tokens, bot tokens, access keys → Store in 1Password as environment variables
+  - Never store credentials directly in code or config files
+  - Reference credentials via environment variables (e.g., ${SLACK_BOT_TOKEN})
+  - When new credentials needed: Guide user through 1Password setup process
 - **Problem-Solving Philosophy**: ALWAYS ask before implementing workarounds
   - Prefer to fix root causes, not create temporary solutions
   - When encountering issues: Present both fix and workaround options, recommend the fix
