@@ -1,0 +1,16 @@
+{
+  "model": "sonnet[1m]",
+  "alwaysThinkingEnabled": false,
+  "hooks": [
+    {
+      "name": "job-done-sound",
+      "event": "stop",
+      "command": "afplay ~/.claude/sounds/jobs-done.mp3 &"
+    },
+    {
+      "name": "more-work-sound",
+      "event": "notification",
+      "command": "afplay ~/.claude/sounds/more-work.mp3 &"
+    }
+  ]
+}
