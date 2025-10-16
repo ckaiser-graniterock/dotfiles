@@ -72,6 +72,8 @@ export SNOWFLAKE_SCHEMA=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT
 export SNOWFLAKE_WAREHOUSE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=warehouse 2>/dev/null || echo "")
 export SNOWFLAKE_ROLE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=role 2>/dev/null || echo "")
 export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=auth_method 2>/dev/null || echo "oauth")
+export SNOWFLAKE_PRIVATE_KEY_PATH=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=SNOWFLAKE_PRIVATE_KEY_PATH 2>/dev/null || echo "")
+export SNOWFLAKE_PRIVATE_KEY_PASSPHRASE=$(op item get "DA Agent Hub - Snowflake" --vault="$VAULT" --fields label=SNOWFLAKE_PRIVATE_KEY_PASSPHRASE --reveal 2>/dev/null || echo "")
 
 # Note: Snowflake PAT is used as password (SNOWFLAKE_PASSWORD)
 # Most tools expect it in the password field, not as a separate token
@@ -83,6 +85,9 @@ export SNOWFLAKE_AUTH_METHOD=$(op item get "DA Agent Hub - Snowflake" --vault="$
 # Slack
 export SLACK_BOT_TOKEN=$(op item get "DA Agent Hub - Slack Bot Token" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
 export SLACK_TEAM_ID=$(op item get "DA Agent Hub - Slack Bot Token" --vault="$VAULT" --fields label=team_id --reveal 2>/dev/null || echo "")
+
+# Orchestra orchestration platform
+export ORCHESTRA_API_KEY=$(op item get "DA Agent Hub - Orchestra" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
 
 # Verify critical secrets were loaded
 if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
@@ -114,6 +119,9 @@ if [ -n "$SNOWFLAKE_ACCOUNT" ] && [ "$SNOWFLAKE_ACCOUNT" != "<your_snowflake_acc
     echo "  SNOWFLAKE_WAREHOUSE: $SNOWFLAKE_WAREHOUSE"
     echo "  SNOWFLAKE_AUTH_METHOD: $SNOWFLAKE_AUTH_METHOD"
 fi
+if [ -n "$ORCHESTRA_API_KEY" ]; then
+    echo "  ORCHESTRA_API_KEY: ${ORCHESTRA_API_KEY:0:15}..."
+fi
 echo ""
 echo -e "${YELLOW}💡 Tip: Source this script to use secrets in your shell:${NC}"
 echo "  source ~/dotfiles/load-secrets-from-1password.sh"
@@ -139,8 +147,11 @@ export SNOWFLAKE_SCHEMA="$SNOWFLAKE_SCHEMA"
 export SNOWFLAKE_WAREHOUSE="$SNOWFLAKE_WAREHOUSE"
 export SNOWFLAKE_ROLE="$SNOWFLAKE_ROLE"
 export SNOWFLAKE_AUTH_METHOD="$SNOWFLAKE_AUTH_METHOD"
+export SNOWFLAKE_PRIVATE_KEY_PATH="$SNOWFLAKE_PRIVATE_KEY_PATH"
+export SNOWFLAKE_PRIVATE_KEY_PASSPHRASE="$SNOWFLAKE_PRIVATE_KEY_PASSPHRASE"
 export SLACK_BOT_TOKEN="$SLACK_BOT_TOKEN"
 export SLACK_TEAM_ID="$SLACK_TEAM_ID"
+export ORCHESTRA_API_KEY="$ORCHESTRA_API_KEY"
 EOF
 
 # Secure the cache file (owner read/write only)
