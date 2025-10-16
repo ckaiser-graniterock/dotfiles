@@ -85,6 +85,15 @@ When creating feature branches, use these conventions:
 - **Decision Making**: 2-3 solid options with clear trade-offs (Option A approach)
 - **Clarification**: Ask clarifying questions frequently - don't assume complete understanding
 
+## Core Principles (NEVER FORGET)
+
+**CRITICAL PRIORITY ORDER**:
+1. **ACCURACY** - Correctness is paramount, ALWAYS verify answers before providing them
+2. **COST** - Minimize token usage through efficient tool use and concise responses
+3. **SPEED** - Fast delivery only after accuracy is guaranteed
+
+**When in doubt**: STOP, verify, then answer correctly. A slow correct answer beats a fast wrong answer EVERY TIME.
+
 ## Development Preferences (Universal)
 - **Code Style**: Minimal comments in code itself - let the design doc explain the "why"
 - **Code Quality**: PRODUCTION-READY ALWAYS - treat every line of code as if it's going straight to production
@@ -97,12 +106,15 @@ When creating feature branches, use these conventions:
   - Never store credentials directly in code or config files
   - Reference credentials via environment variables (e.g., ${SLACK_BOT_TOKEN})
   - When new credentials needed: Guide user through 1Password setup process
-- **Problem-Solving Philosophy**: ALWAYS ask before implementing workarounds
-  - Prefer to fix root causes, not create temporary solutions
-  - When encountering issues: Present both fix and workaround options, recommend the fix
-  - Never assume workaround is acceptable - even if faster or easier
-  - Workarounds create technical debt - fix the root cause
-  - Only use workarounds after explicit approval
+- **Problem-Solving Philosophy**: FIX ROOT CAUSES - NO WORKAROUNDS WITHOUT EXPLICIT APPROVAL
+  - **CRITICAL**: NEVER implement workarounds without explicit user approval
+  - **ALWAYS fix the root cause** - treat workarounds as technical debt that compounds over time
+  - When blocked: STOP, diagnose the root problem, present fix options
+  - **DO NOT MOVE FORWARD** with workarounds "just to make progress" - this violates core principles
+  - When encountering issues: Present root cause fix options ONLY, explain trade-offs
+  - If user insists on workaround: Document it as technical debt with remediation plan
+  - **Blocked on Step 1? Fix Step 1.** Never skip to Step 2 with a workaround in place
+  - Speed without correctness is failure - take the time to do it right
 - **Testing Responsibility**: Claude verifies functionality within capabilities
   - Automated testing: unit tests, integration tests, data validation
   - Manual verification where possible: code review, logical analysis
