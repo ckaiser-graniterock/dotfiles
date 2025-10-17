@@ -89,6 +89,9 @@ export SLACK_TEAM_ID=$(op item get "DA Agent Hub - Slack Bot Token" --vault="$VA
 # Orchestra orchestration platform
 export ORCHESTRA_API_KEY=$(op item get "DA Agent Hub - Orchestra" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
 
+# dlthub data ingestion platform
+export DLTHUB_LICENSE_KEY=$(op item get "DA Agent Hub - dlthub" --vault="$VAULT" --fields label=credential --reveal 2>/dev/null || echo "")
+
 # Verify critical secrets were loaded
 if [ -z "$DBT_CLOUD_API_TOKEN" ] || [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ] || [ -z "$AWS_ACCESS_KEY_ID" ]; then
     echo -e "${RED}❌ Failed to load critical secrets from 1Password${NC}"
@@ -122,6 +125,9 @@ fi
 if [ -n "$ORCHESTRA_API_KEY" ]; then
     echo "  ORCHESTRA_API_KEY: ${ORCHESTRA_API_KEY:0:15}..."
 fi
+if [ -n "$DLTHUB_LICENSE_KEY" ]; then
+    echo "  DLTHUB_LICENSE_KEY: ${DLTHUB_LICENSE_KEY:0:15}..."
+fi
 echo ""
 echo -e "${YELLOW}💡 Tip: Source this script to use secrets in your shell:${NC}"
 echo "  source ~/dotfiles/load-secrets-from-1password.sh"
@@ -152,6 +158,7 @@ export SNOWFLAKE_PRIVATE_KEY_PASSPHRASE="$SNOWFLAKE_PRIVATE_KEY_PASSPHRASE"
 export SLACK_BOT_TOKEN="$SLACK_BOT_TOKEN"
 export SLACK_TEAM_ID="$SLACK_TEAM_ID"
 export ORCHESTRA_API_KEY="$ORCHESTRA_API_KEY"
+export DLTHUB_LICENSE_KEY="$DLTHUB_LICENSE_KEY"
 EOF
 
 # Secure the cache file (owner read/write only)
