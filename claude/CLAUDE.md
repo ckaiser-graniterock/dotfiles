@@ -16,7 +16,7 @@ don't look at the full .env file. Only search for the var names up to the equals
 1. **ALWAYS create feature branch** before making any code changes
 2. **ALWAYS create Pull Request** for code review and approval
 3. **NEVER push directly** to protected branches
-4. **NEVER merge without approval** (except for da-agent-hub documentation updates)
+4. **NEVER commit to main without explicit user approval** - ALWAYS ask first, even for documentation
 
 ### Pre-Commit Safety Check
 Before executing ANY git commit command, Claude MUST:
@@ -60,11 +60,31 @@ I can:
 Would you like me to proceed with this workflow?
 ```
 
-### Exceptions
-**ONLY exception**: Documentation-only changes in da-agent-hub repository
-- Changes to `*.md` files in da-agent-hub can be committed to main
-- All code changes still require feature branch + PR workflow
-- Claude should confirm: "These are documentation-only changes, proceeding with direct commit to main"
+### Approval Protocol for Protected Branches
+**CRITICAL**: NEVER commit to protected branches without explicit user approval
+
+**Before ANY commit to main/master/production**:
+1. **STOP** - Do not proceed with commit
+2. **ASK** - "I have changes ready. Should I:
+   - A) Commit to feature branch + create PR (recommended)
+   - B) Commit directly to main (requires your explicit approval)"
+3. **WAIT** - For explicit "yes, commit to main" response
+4. **NEVER ASSUME** - Even for documentation, ALWAYS ask first
+
+**Example Interaction**:
+```
+Claude: "I've updated the documentation. Should I:
+A) Create a feature branch and PR for review
+B) Commit directly to main
+
+Which would you prefer?"
+
+User: "B is fine" or "yes commit to main"
+
+Claude: ✅ Proceeding with direct commit to main
+```
+
+**NO EXCEPTIONS** - Every main branch commit requires explicit approval
 
 ### Feature Branch Naming
 When creating feature branches, use these conventions:
@@ -89,10 +109,50 @@ When creating feature branches, use these conventions:
 
 **CRITICAL PRIORITY ORDER**:
 1. **ACCURACY** - Correctness is paramount, ALWAYS verify answers before providing them
+   - **NEVER present partial data as complete** - check pagination, get ALL results
+   - **When APIs return paginated data**: Check 'total' field, fetch all pages before analysis
+   - **Incomplete data = ACCURACY VIOLATION** - as critical as providing wrong information
 2. **COST** - Minimize token usage through efficient tool use and concise responses
 3. **SPEED** - Fast delivery only after accuracy is guaranteed
 
 **When in doubt**: STOP, verify, then answer correctly. A slow correct answer beats a fast wrong answer EVERY TIME.
+
+**Pagination Rule**: If an API response shows `total > results.length`, you MUST fetch remaining pages before reporting findings. Presenting "50 of 149 failures" as "all failures" is an ACCURACY VIOLATION.
+
+### Orchestra MCP Pagination - MANDATORY Protocol
+
+**CRITICAL**: Before ANY Orchestra MCP call, ALWAYS consult `.claude/agents/specialists/orchestra-expert.md` lines 96-159
+
+**The Pattern** (from documentation):
+```python
+# ✅ ALWAYS use page parameter (1-indexed: 1, 2, 3, ...)
+all_results = []
+page = 1
+
+while True:
+    response = list_pipeline_runs(status="FAILED", page=page)
+    all_results.extend(response['results'])
+    if len(all_results) >= response['total']:
+        break
+    page += 1  # Increment page, NOT offset
+
+# NOW analyze complete dataset
+```
+
+**NEVER use `offset` parameter** - it was removed in PR #149
+
+**Why This Rule Exists**:
+- User provided this pattern because it's the CORRECT approach
+- Instructions exist to prevent production failures
+- Ignoring documented patterns wastes time and breaks trust
+- "I didn't follow the documentation" is NOT an acceptable excuse
+
+**Mandatory Checklist** (before Orchestra MCP calls):
+- [ ] Have I read `.claude/agents/specialists/orchestra-expert.md` lines 96-159?
+- [ ] Am I using `page` parameter (not `offset`)?
+- [ ] Am I following the exact documented pattern?
+
+**If ANY checkbox is unchecked → STOP and read the documentation**
 
 ## Development Preferences (Universal)
 - **Code Style**: Minimal comments in code itself - let the design doc explain the "why"
